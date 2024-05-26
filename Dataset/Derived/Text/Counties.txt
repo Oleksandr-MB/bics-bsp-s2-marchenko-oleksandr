@@ -1,0 +1,113 @@
+North East:Hartlepool
+North East:Middlesbrough
+North East:Redcar and Cleveland
+North East:Stockton-on-Tees
+North East:Darlington
+North East:County Durham
+North East:Northumberland
+North East:Tyne and Wear
+North West:Halton
+North West:Warrington
+North West:Blackburn with Darwen
+North West:Blackpool
+North West:Cheshire East
+North West:Cheshire West and Chester
+North West:Cumbria
+North West:Lancashire
+North West:Greater Manchester
+North West:Merseyside
+Yorkshire and The Humber:Kingston upon Hull, City of
+Yorkshire and The Humber:East Riding of Yorkshire
+Yorkshire and The Humber:North East Lincolnshire
+Yorkshire and The Humber:North Lincolnshire
+Yorkshire and The Humber:York
+Yorkshire and The Humber:North Yorkshire
+Yorkshire and The Humber:South Yorkshire
+Yorkshire and The Humber:West Yorkshire
+East Midlands:Derby
+East Midlands:Leicester
+East Midlands:Rutland
+East Midlands:Nottingham
+East Midlands:North Northamptonshire
+East Midlands:West Northamptonshire
+East Midlands:Derbyshire
+East Midlands:Leicestershire
+East Midlands:Lincolnshire
+East Midlands:Nottinghamshire
+West Midlands:Herefordshire, County of
+West Midlands:Telford and Wrekin
+West Midlands:Stoke-on-Trent
+West Midlands:Shropshire
+West Midlands:Staffordshire
+West Midlands:Warwickshire
+West Midlands:Worcestershire
+West Midlands:West Midlands
+East of England:Peterborough
+East of England:Luton
+East of England:Southend-on-Sea
+East of England:Thurrock
+East of England:Bedford
+East of England:Central Bedfordshire
+East of England:Cambridgeshire
+East of England:Essex
+East of England:Hertfordshire
+East of England:Norfolk
+East of England:Suffolk
+London:Inner London
+London:Outer London
+South East:Medway
+South East:Bracknell Forest
+South East:West Berkshire
+South East:Reading
+South East:Slough
+South East:Windsor and Maidenhead
+South East:Wokingham
+South East:Milton Keynes
+South East:Brighton and Hove
+South East:Portsmouth
+South East:Southampton
+South East:Isle of Wight
+South East:Buckinghamshire
+South East:East Sussex
+South East:Hampshire
+South East:Kent
+South East:Oxfordshire
+South East:Surrey
+South East:West Sussex
+South West:Bath and North East Somerset
+South West:Bristol, City of
+South West:North Somerset
+South West:South Gloucestershire
+South West:Plymouth
+South West:Torbay
+South West:Swindon
+South West:Cornwall
+South West:Isles of Scilly
+South West:Wiltshire
+South West:Bournemouth, Christchurch and Poole
+South West:Dorset
+South West:Devon
+South West:Gloucestershire
+South West:Somerset
+Wales:Isle of Anglesey
+Wales:Gwynedd
+Wales:Conwy
+Wales:Denbighshire
+Wales:Flintshire
+Wales:Wrexham
+Wales:Ceredigion
+Wales:Pembrokeshire
+Wales:Carmarthenshire
+Wales:Swansea
+Wales:Neath Port Talbot
+Wales:Bridgend
+Wales:Vale of Glamorgan
+Wales:Cardiff
+Wales:Rhondda Cynon Taf
+Wales:Caerphilly
+Wales:Blaenau Gwent
+Wales:Torfaen
+Wales:Monmouthshire
+Wales:Newport
+Wales:Powys
+Wales:Merthyr Tydfil
