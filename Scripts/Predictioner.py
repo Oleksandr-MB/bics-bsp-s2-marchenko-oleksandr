@@ -4,10 +4,8 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-
 from sklearn.linear_model import LinearRegression 
 from sklearn.preprocessing import PolynomialFeatures 
-
 import warnings
 import sys
 warnings.filterwarnings("ignore")
@@ -308,9 +306,18 @@ def main():
     #output_size = 12 # Uncomment this line for assessment
 
     # Initialize the Prediction class
-    prediction = Predictioner(dataset_num, division, region, location, building_type, output_size, lookback)
-    df = prediction.read_data()
-    print(df)
+    try:
+        # Deal with edge cases that don't have certain types of dwelling
+        if location in ["City of London", "Isles of Scilly"] and building_type != "All":
+            building_type = "All"
+
+        prediction = Predictioner(dataset_num, division, region, location, building_type, output_size, lookback)
+        df = prediction.read_data()
+        print(df)
+    except:
+        prediction = Predictioner("ds6", "1", "England and Wales", "", "All", output_size, lookback)
+        df = prediction.read_data()
+        print(df)
 
     # Create tensors
     X_train_tensors_final, X_test_tensors_final, y_train_tensors_final, y_test_tensors_final = prediction.create_tensors(lookback, output_size)

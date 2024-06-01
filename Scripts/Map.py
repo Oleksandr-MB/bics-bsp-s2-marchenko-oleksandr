@@ -144,7 +144,7 @@ class Map():
         # Show the plot
         plt.show()
            
-# Main function to run the program
+# Main function
 def main():
     building_type = sys.argv[1]
     map = Map(building_type)

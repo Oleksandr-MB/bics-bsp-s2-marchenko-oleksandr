@@ -7,54 +7,71 @@ from statsmodels.tsa.stattools import adfuller
 from pandas.plotting import lag_plot
 import sys
 
+# Define a class to analyze data
 class Data_Analizer:
     def __init__(self, dataset_num, division_by, region, location):
+        # Initialize the class with dataset number, division, region, and location
         self.dataset_num = dataset_num
         self.division = division_by
         self.region = region
         self.location = location
 
+        # Define the types of buildings
         self.types_d = {"All": "a", "Detached": "b", "Semi-detached": "c", "Terraced": "d", "Flats and Maisonets": "e"}
         self.type_codes = list(self.types_d.values())
         self.labels = list(self.types_d.keys())
         
+        # Define the path to the dataset
         self.path = f"Dataset/Derived/{self.dataset_num}"
 
+        # Define the target column based on the dataset number
         self.target_column = "Number of Sales" if self.dataset_num == "ds6" else "Median Price"
         
-        self.plots = ["Original", "Trend", "Seasonal Component", "Stationary", "Detrended", "Deseasonalized", "Autocorrelation", "Lag"]
+        # Define the types of plots
+        self.plots = ["Original", "Trend", "Detrended", "Seasonal Component", "Deseasonalized", "Stationary", "Autocorrelation", "Lag"]
+        # Define the colors for the plots
         self.colours = ["#003f5c", "#58508d", "#bc5090", "#ff6361", "#ffa600"]
 
     def read_spreadsheet(self, division, building_type, region, location): 
+        # Define the file path based on the location
         if location == "":
             file = f"{self.path}/{division}{building_type}/{region}.csv"
         else:
             file = f"{self.path}/{division}{building_type}/{location}.csv"
             
+        # Read the csv file into a pandas DataFrame
         df_location = pd.read_csv(file, index_col=0, header=0)
+        # Rename the first column to the target column
         df_location.rename(columns={df_location.columns[0]: self.target_column}, inplace=True)
+        # Drop rows with missing target column values
         df_location.dropna(subset=[self.target_column], inplace=True)
 
         return df_location[[self.target_column]]
 
     def decompose(self, df_location):
-        multiplicative_decomposition = seasonal_decompose(df_location[self.target_column], model="multiplicative", period=12)
+        # Decompose the time series data into trend, seasonal, and residual components
+        multiplicative_decomposition = seasonal_decompose(df_location[self.target_column], 
+                                                          model="multiplicative", period=12)
         return multiplicative_decomposition
 
     def trends(self, decomposition):
+        # Return the trend component of the decomposition
         return decomposition.trend
 
     def seasonality(self, decomposition):
+        # Return the seasonal component of the decomposition
         return decomposition.seasonal
     
     def is_stationary(self, series):
+        # Check if the series is stationary using the Augmented Dickey-Fuller test
         statistic_test, p_value = adfuller(series)[:2]
         return statistic_test < 0 and p_value < 0.005
     
-    def differenciate(self, by_location):
-        if by_location is None:
+    def differenciate(self, df_location):
+        # Differentiate the series until it becomes stationary
+        if df_location is None:
             return None
-        differentiated = by_location[self.target_column]
+        differentiated = df_location[self.target_column]
 
         while not self.is_stationary(differentiated):            
             differentiated = differentiated.diff()
@@ -63,20 +80,26 @@ class Data_Analizer:
         return differentiated
 
     def detrend(self, series):
-        detrended = pd.Series(signal.detrend(series.values).flatten(), index=series.index)
-        detrended.dropna(inplace=True)
-        return detrended
+        # Detrend the series
+        detrended_series = pd.Series(signal.detrend(series.values).flatten(), index=series.index)
+        detrended_frame = detrended_series.to_frame()
+        detrended_frame.rename(columns={detrended_frame.columns[0]: self.target_column}, inplace=True)
+        detrended_frame.dropna(inplace=True)
+        return detrended_frame
 
     def deseasonify(self, series):
+        # Remove the seasonal component from the series by taking the rolling average
         series = series.rolling(window=12).mean()
         series.dropna(inplace=True)
         return series
 
     def plot_data(self):
+        # This function will be implemented in the subclasses
         pass
         
 class Data_Analizer_1(Data_Analizer):
     def plot_data(self):
+        # Plot the data for each type of plot and each type of building
         for plot_type in self.plots:
             problematic = []
             fig, ax = plt.subplots(figsize=(8, 6))
@@ -94,10 +117,11 @@ class Data_Analizer_1(Data_Analizer):
 
                 trends = self.trends(decomposition)
                 seasonality = self.seasonality(decomposition)
-                differentiated = self.differenciate(df_location.copy())
+
                 detrended = self.detrend(df_location.copy())
                 deseasonalized = self.deseasonify(df_location.copy())
-                lags = df_location.copy()
+
+                stationary = self.differenciate(self.deseasonify(self.detrend(df_location.copy())))
                 
                 # Return the required plot
                 match plot_type:
@@ -106,26 +130,26 @@ class Data_Analizer_1(Data_Analizer):
                             
                     case "Trend":
                         data = trends
-                            
-                    case "Seasonal Component":
-                        data = seasonality
-                            
-                    case "Stationary":
-                        data = differentiated
-                            
+                    
                     case "Detrended":
                         data = detrended
                             
+                    case "Seasonal Component":
+                        data = seasonality
+                                        
                     case "Deseasonalized":
                         data = deseasonalized
+
+                    case "Stationary":
+                        data = stationary
                         
                     case "Autocorrelation":
-                        autocorrelation_plot(deseasonalized, ax=ax, color=self.colours[i])
+                        autocorrelation_plot(df_location, ax=ax, color=self.colours[i])
                         ax.plot([], [], color=self.colours[i], label=self.labels[i])
                         continue
                     
                     case "Lag":
-                        lag_plot(lags, ax=ax, lag=3, c=self.colours[i]) 
+                        lag_plot(df_location, ax=ax, lag=3, c=self.colours[i]) 
                         ax.plot([], [], color=self.colours[i], label=self.labels[i])
                         continue
    
@@ -144,11 +168,13 @@ class Data_Analizer_1(Data_Analizer):
         
 class Data_Analizer_2(Data_Analizer):   
     def plot_data(self):
+        # Plot the data for each type of plot and each type of building for both the location and the region
         for plot_type in self.plots:
             problematic_loc = []
             problematic_reg = []
             
             fig, axs = plt.subplots(1, 2, figsize=(16, 6))
+            # Plot for every dwelling type
             for i, letter in enumerate(self.type_codes):
                 df_location = self.read_spreadsheet(self.division, letter, self.region, self.location)
                 df_region = self.read_spreadsheet(1, letter, self.region, "")
@@ -174,14 +200,14 @@ class Data_Analizer_2(Data_Analizer):
                 seasonality_loc = self.seasonality(decomposition_loc)
                 seasonality_reg = self.seasonality(decomposition_reg)
 
-                differentiated_loc = self.differenciate(df_location.copy())
-                differentiated_reg = self.differenciate(df_region.copy())
-
                 detrended_loc = self.detrend(df_location.copy())
                 detrended_reg = self.detrend(df_region.copy())
                 
                 deseasonalized_loc  = self.deseasonify(df_location.copy())
                 deseasonalized_reg  = self.deseasonify(df_region.copy())
+
+                stationary_loc = self.differenciate(self.deseasonify(self.detrend(df_location.copy())))
+                stationary_reg = self.differenciate(self.deseasonify(self.detrend(df_region.copy())))
 
                 match plot_type:
                     case "Original":
@@ -191,36 +217,36 @@ class Data_Analizer_2(Data_Analizer):
                     case "Trend":
                         data_loc = trends_loc
                         data_reg = trends_reg
-                            
-                    case "Seasonal Component":
-                        data_loc = seasonality_loc
-                        data_reg = seasonality_reg
-                            
-                    case "Stationary":
-                        data_loc = differentiated_loc
-                        data_reg = differentiated_reg
-                            
+                    
                     case "Detrended":
                         data_loc = detrended_loc
                         data_reg = detrended_reg
                             
+                    case "Seasonal Component":
+                        data_loc = seasonality_loc
+                        data_reg = seasonality_reg
+                                                
                     case "Deseasonalized":
                         data_loc = deseasonalized_loc
                         data_reg = deseasonalized_reg
+                    
+                    case "Stationary":
+                        data_loc = stationary_loc
+                        data_reg = stationary_reg
                         
                     case "Autocorrelation":
-                        autocorrelation_plot(deseasonalized_loc, ax=axs[0], color=self.colours[i])
+                        autocorrelation_plot(df_location[self.target_column], ax=axs[0], color=self.colours[i])
                         axs[0].plot([], [], color=self.colours[i], label=self.labels[i])
 
-                        autocorrelation_plot(deseasonalized_reg, ax=axs[1], color=self.colours[i])
+                        autocorrelation_plot(df_region[self.target_column], ax=axs[1], color=self.colours[i])
                         axs[1].plot([], [], color=self.colours[i], label=self.labels[i])
                         continue
 
                     case "Lag":
-                        lag_plot(deseasonalized_loc, ax=axs[0], lag=3, c=self.colours[i])
+                        lag_plot(df_location[self.target_column], ax=axs[0], lag=3, c=self.colours[i])
                         axs[0].plot([], [], color=self.colours[i], label=self.labels[i])
 
-                        lag_plot(deseasonalized_reg, ax=axs[1], lag=3, c=self.colours[i])
+                        lag_plot(df_region[self.target_column], ax=axs[1], lag=3, c=self.colours[i])
                         axs[1].plot([], [], color=self.colours[i], label=self.labels[i])
                         continue
 
@@ -242,6 +268,7 @@ class Data_Analizer_2(Data_Analizer):
             print(", ".join(problematic_reg) + " are not available in this region")
             print(", ".join(problematic_loc) + " are not available in this location")
 
+# Main function
 def main():
     try:
         dataset, division, region, location = sys.argv[1:5]
@@ -249,8 +276,8 @@ def main():
             Analizer = Data_Analizer_1(dataset, division, region, location)
         else:
             Analizer = Data_Analizer_2(dataset, division, region, location) 
-    except:
-        Analizer = Data_Analizer_1("ds6", "Region", "England and Wales", "") 
+    except: # Use default values to avoid crushing
+        Analizer = Data_Analizer_1("ds6", "1", "England and Wales", "")
 
     Analizer.plot_data()
 
