@@ -57,6 +57,7 @@ class Predictioner:
     
     def set_file_path(self):
         self.path = f"Dataset/Derived/{self.dataset_num}"
+        print(self.path)
 
     def set_some_lstm_params(self, lookback, output_size):
         self.mm_sc = MinMaxScaler()
@@ -308,14 +309,14 @@ def main():
     # Initialize the Prediction class
     try:
         # Deal with edge cases that don't have certain types of dwelling
-        if location in ["City of London", "Isles of Scilly"] and building_type != "All":
-            building_type = "All"
+        if location in ["City of London", "Isles of Scilly"] and building_type != "a":
+            building_type = "a"
 
         prediction = Predictioner(dataset_num, division, region, location, building_type, output_size, lookback)
         df = prediction.read_data()
         print(df)
     except:
-        prediction = Predictioner("ds6", "1", "England and Wales", "", "All", output_size, lookback)
+        prediction = Predictioner("ds6", "1", "England and Wales", "", "a", output_size, lookback)
         df = prediction.read_data()
         print(df)
 
