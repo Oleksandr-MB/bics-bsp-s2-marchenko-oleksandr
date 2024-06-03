@@ -190,7 +190,7 @@ class Main:
         region = self.region_dropdown.get()
         location = self.location_dropdown.get()
 
-        script_path = "Scripts/Analizer.py"
+        script_path = "Scripts/Analyzer.py"
         subprocess.Popen(["python", script_path, dataset, division, region, location])
 
     def open_map(self):      
