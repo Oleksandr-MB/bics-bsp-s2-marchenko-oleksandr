@@ -225,6 +225,7 @@ def main():
     root = tk.Tk()
     root.title("Main menu")
     app = Main(root)
+    root.resizable(False, False)
     root.mainloop()
 
 if __name__ == "__main__":
