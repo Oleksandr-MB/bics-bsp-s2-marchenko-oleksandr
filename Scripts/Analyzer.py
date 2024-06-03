@@ -8,7 +8,7 @@ from pandas.plotting import lag_plot
 import sys
 
 # Define a class to analyze data
-class Data_Analizer:
+class Data_Analyzer:
     def __init__(self, dataset_num, division_by, region, location):
         # Initialize the class with dataset number, division, region, and location
         self.dataset_num = dataset_num
@@ -97,7 +97,7 @@ class Data_Analizer:
         # This function will be implemented in the subclasses
         pass
         
-class Data_Analizer_1(Data_Analizer):
+class Data_Analyzer_1(Data_Analyzer):
     def plot_data(self):
         # Plot the data for each type of plot and each type of building
         for plot_type in self.plots:
@@ -166,7 +166,7 @@ class Data_Analizer_1(Data_Analizer):
         if len(problematic) > 0:
             print(", ".join(problematic) + " are not available in this area")
         
-class Data_Analizer_2(Data_Analizer):   
+class Data_Analyzer_2(Data_Analyzer):   
     def plot_data(self):
         # Plot the data for each type of plot and each type of building for both the location and the region
         for plot_type in self.plots:
@@ -273,13 +273,13 @@ def main():
     try:
         dataset, division, region, location = sys.argv[1:5]
         if not location:
-            Analizer = Data_Analizer_1(dataset, division, region, location)
+            Analyzer = Data_Analyzer_1(dataset, division, region, location)
         else:
-            Analizer = Data_Analizer_2(dataset, division, region, location) 
+            Analyzer = Data_Analyzer_2(dataset, division, region, location) 
     except: # Use default values to avoid crushing
-        Analizer = Data_Analizer_1("ds6", "1", "England and Wales", "")
+        Analyzer = Data_Analyzer_1("ds6", "1", "England and Wales", "")
 
-    Analizer.plot_data()
+    Analyzer.plot_data()
 
 if __name__ == "__main__":
     main()
