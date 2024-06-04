@@ -1,0 +1,12 @@
+tkinter
+ttkwidgets
+tkcalendar
+openpyxl
+pandas
+numpy
+statsmodels
+matplotlib
+scipy
+torch
+scikit-learn
+geopandas
