@@ -8,7 +8,7 @@ Author: Oleksandr Marchenko Breneur
 
 Supervising tutor: Maria Biryukov
 
-Enshure that git is installed on your machine, if it is not, download it from the official website.
+Ensure that git is installed on your machine, if it is not, download it from the official website.
 
 https://www.git-scm.com/downloads
 
@@ -18,7 +18,7 @@ git clone https://github.com/Oleksandr-MB/bics-bsp-s2-marchenko-oleksandr
 
 It will create a folder in the directory you are currently pointing to.
 
-Enshure that your version of python is 3.10 or above.
+Ensure that your version of python is 3.10 or above.
 
 You can download it from the official website.
 
