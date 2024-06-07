@@ -62,9 +62,9 @@ class Data_Analyzer:
         # Return the seasonal component of the decomposition
         return decomposition.seasonal
     
-    def is_stationary(self, series):
+    def is_stationary(self, df):
         # Check if the series is stationary using the Augmented Dickey-Fuller test
-        statistic_test, p_value = adfuller(series)[:2]
+        statistic_test, p_value = adfuller(df)[:2]
         return statistic_test < 0 and p_value < 0.005
     
     def differenciate(self, df_location):
@@ -79,19 +79,19 @@ class Data_Analyzer:
 
         return differentiated
 
-    def detrend(self, series):
+    def detrend(self, df):
         # Detrend the series
-        detrended_series = pd.Series(signal.detrend(series.values).flatten(), index=series.index)
+        detrended_series = df[self.target_column].values - self.trends(self.decompose(df))
         detrended_frame = detrended_series.to_frame()
         detrended_frame.rename(columns={detrended_frame.columns[0]: self.target_column}, inplace=True)
         detrended_frame.dropna(inplace=True)
         return detrended_frame
 
-    def deseasonify(self, series):
+    def deseasonify(self, df):
         # Remove the seasonal component from the series by taking the rolling average
-        series = series.rolling(window=12).mean()
-        series.dropna(inplace=True)
-        return series
+        df = df.rolling(window=12).mean()
+        df.dropna(inplace=True)
+        return df
 
     def plot_data(self):
         # This function will be implemented in the subclasses
@@ -152,9 +152,10 @@ class Data_Analyzer_1(Data_Analyzer):
                         lag_plot(df_location, ax=ax, lag=3, c=self.colours[i]) 
                         ax.plot([], [], color=self.colours[i], label=self.labels[i])
                         continue
-   
-                data.plot(ax=ax, color=self.colours[i], label=self.labels[i])
-                
+                ax.plot(data, color=self.colours[i], label=self.labels[i])
+            ticks = ax.get_xticks()
+            ax.set_xticks(ticks[::48])
+
             plt.title(self.location + self.region, fontsize=10)
             plt.suptitle(plot_type, fontsize=10)
             plt.tight_layout()
@@ -250,12 +251,17 @@ class Data_Analyzer_2(Data_Analyzer):
                         axs[1].plot([], [], color=self.colours[i], label=self.labels[i])
                         continue
 
+                axs[0].plot(data_loc, color=self.colours[i], label=self.labels[i])
+                axs[1].plot(data_reg, color=self.colours[i], label=self.labels[i])
+            
+            ticks = axs[0].get_xticks()
+            axs[0].set_xticks(ticks[::48])
+                
+            ticks = axs[1].get_xticks()
+            axs[1].set_xticks(ticks[::48])
 
-                data_loc.plot(ax=axs[0], color=self.colours[i], label=self.labels[i])
-                axs[0].set_title(self.location + ", " + self.region)
-
-                data_reg.plot(ax=axs[1], color=self.colours[i], label=self.labels[i])
-                axs[1].set_title(self.region)
+            axs[0].set_title(self.location + ", " + self.region)
+            axs[1].set_title(self.region)
             
             plt.suptitle(plot_type, fontsize=10)
             plt.tight_layout()
