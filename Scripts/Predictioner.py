@@ -288,7 +288,7 @@ class Predictioner:
         
         plt.xlabel("Date")
         plt.ylabel(self.target_column)
-        plt.title("Time-Series Prediction")
+        plt.title(f"{self.target_column} Prediction for {self.location}")
         plt.legend()
         plt.show()
 
