@@ -288,7 +288,10 @@ class Predictioner:
         
         plt.xlabel("Date")
         plt.ylabel(self.target_column)
-        plt.title(f"{self.target_column} Prediction for {self.location}")
+        if self.location:
+            plt.title(f"{self.target_column} Prediction for {self.location}, {self.region}")
+        else:
+            plt.title(f"{self.target_column} Prediction for {self.region}")
         plt.legend()
         plt.show()
 
@@ -313,12 +316,12 @@ def main():
             building_type = "a"
 
         prediction = Predictioner(dataset_num, division, region, location, building_type, output_size, lookback)
-        df = prediction.read_data()
-        print(df)
+        
     except:
         prediction = Predictioner("ds6", "1", "England and Wales", "", "a", output_size, lookback)
-        df = prediction.read_data()
-        print(df)
+
+    df = prediction.read_data()
+    print(df)
 
     # Create tensors
     X_train_tensors_final, X_test_tensors_final, y_train_tensors_final, y_test_tensors_final = prediction.create_tensors(lookback, output_size)
