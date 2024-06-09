@@ -216,7 +216,7 @@ class Main:
         
         window = month_diff(selected, last_in_the_df)
 
-        if window < 0: window = 0
+        if window < 1: window = 1
 
         script_path = "Scripts/Predictioner.py"
         subprocess.Popen(["python", script_path, dataset, division, region, location, type, str(window)])
